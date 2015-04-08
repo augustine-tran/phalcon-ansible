@@ -1,0 +1,4 @@
+# roles/common/tasks/main.yml
+---
+- name: update Unbuntu
+  apt: update_cache=yes

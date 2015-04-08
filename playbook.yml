@@ -1,0 +1,33 @@
+---
+- hosts: all
+  vars:
+    # Apache Virtual hosts
+    apache_vhosts:
+      - {
+        servername: "local.dev",
+        documentroot: "/vagrant/web",
+        env_vars: [
+          { name: "DB_HOST", value: "localhost" },
+          { name: "DB_NAME", value: "devdb" },
+          { name: "DB_USER", value: "devdb" },
+          { name: "DB_PASS", value: "vagrant" }
+        ]
+      }
+
+    # MySQL databases and users
+    mysql_databases:
+      - { name: devdb, collation: utf8_general_ci, encoding: utf8 }
+    mysql_users:
+      - { name: devdb, host: localhost, password: vagrant, priv: "devdb.*:ALL" }
+    project_root: /vagrant
+    composer_path: /usr/local/bin/composer
+  #vars_files:
+  #  - ~/.ansible/vars/gucms/development.yml
+  roles:
+    - geerlingguy.apache
+    - geerlingguy.php
+    - sarrubia.phalcon
+    - geerlingguy.composer
+    - geerlingguy.mysql
+    - doctrine-migration
+    - { role: gucms, DB_HOST: localhost, DB_USER: "{{mysql_users[0].name}}", DB_PASS: vagrant, DB_NAME: devdb }

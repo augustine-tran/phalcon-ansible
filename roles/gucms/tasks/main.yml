@@ -1,0 +1,15 @@
+---
+# tasks file for gucms
+- name: set writeable permission for Phalcon app
+  file: path={{ project_root }}/app/cache owner=www-data group=www-data mode=0644
+  file: path={{ project_root }}/web/assets owner=www-data group=www-data mode=0644
+  file: path={{ project_root }}/web/img owner=www-data group=www-data mode=0644
+- name: run composer update
+  shell: composer update
+  args:
+      chdir: "{{ project_root }}"
+- name: run migrations
+  shell: DB_HOST={{DB_HOST}} DB_USER={{DB_USER}} DB_PASS={{DB_PASS}} DB_NAME={{DB_NAME}} doctrine-migrations migrations:migrate --no-interaction
+  args:
+    chdir: "{{ project_root }}/migrations"
+  ignore_errors: True
